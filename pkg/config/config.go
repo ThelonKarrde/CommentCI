@@ -13,7 +13,7 @@ type Data struct {
 	GitHubCommentToken string
 	CommentText        string
 	CommentFiles       []string
-	FilesNames         []string
+	FileList           []string
 	CodeStyleMode      bool
 }
 
@@ -52,6 +52,10 @@ func readArgConfig(data *Data) *Data {
 		Required: false,
 		Help:     "By repeating this flag you can specify multiply files which needs to be send to comment.",
 	})
+	fCmt := parser.StringList("l", "file-comments", &argparse.Options{
+		Required: false,
+		Help:     "By repeating this flag you can specify comments for provided files in according order",
+	})
 	err := parser.Parse(os.Args)
 	if err != nil {
 		log.Println(err.Error())
@@ -60,7 +64,8 @@ func readArgConfig(data *Data) *Data {
 	data.GitHubRepoName = *ghrn
 	data.CommentText = *cmt
 	data.CodeStyleMode = *csm
-	data.CommentFiles = *fList
+	data.FileList = *fList
+	data.CommentFiles = *fCmt
 	return data
 }
 
