@@ -11,10 +11,11 @@ import (
 func main() {
 	data := config.ReadConfig()
 	if data.CommentText != "" {
-		if data.FileList != nil {
+		if len(data.FileList) != 0 {
 			log.Println("Warning! Both single-comment and file-comment args are specified! Priority over single comment flag.")
 		}
-		ghi.CommentIssue(&data.CommentText, data.GitHubCommentToken, data.GitHubRepoOwner, data.GitHubRepoName, data.IssueNumber)
+		comment := cmt.MakeComment(data.CommentText, "", data.CodeStyleMode)
+		ghi.CommentIssue(&comment, data.GitHubCommentToken, data.GitHubRepoOwner, data.GitHubRepoName, data.IssueNumber)
 	} else {
 		if data.MultiCommentMode == false {
 			if data.FileList != nil {
