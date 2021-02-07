@@ -15,6 +15,8 @@ type Data struct {
 	CommentFiles       []string
 	FileList           []string
 	CodeStyleMode      bool
+	IssueNumber        int
+	MultiCommentMode   bool
 }
 
 func readEnvConfig(data *Data) *Data {
@@ -34,11 +36,11 @@ func readEnvConfig(data *Data) *Data {
 func readArgConfig(data *Data) *Data {
 	parser := argparse.NewParser("CommentCI", "Sent a comment to GitHub PR or Issue from your CI")
 	ghro := parser.String("o", "github-owner", &argparse.Options{
-		Required: false,
+		Required: true,
 		Help:     "Name of the owner of repository",
 	})
 	ghrn := parser.String("r", "github-repository", &argparse.Options{
-		Required: false,
+		Required: true,
 		Help:     "Name of the github repository",
 	})
 	cmt := parser.String("s", "comment", &argparse.Options{
@@ -56,6 +58,15 @@ func readArgConfig(data *Data) *Data {
 		Required: false,
 		Help:     "By repeating this flag you can specify comments for provided files in according order",
 	})
+	isn := parser.Int("i", "issue-number", &argparse.Options{
+		Required: true,
+		Help:     "Issue/PR number which should be commented",
+	})
+	mcm := parser.Flag("m", "multi-comment", &argparse.Options{
+		Required: false,
+		Default:  false,
+		Help:     "If you want to put each file into a separate comment, set this flag to true.",
+	})
 	err := parser.Parse(os.Args)
 	if err != nil {
 		log.Println(err.Error())
@@ -66,12 +77,14 @@ func readArgConfig(data *Data) *Data {
 	data.CodeStyleMode = *csm
 	data.FileList = *fList
 	data.CommentFiles = *fCmt
+	data.IssueNumber = *isn
+	data.MultiCommentMode = *mcm
 	return data
 }
 
 func ReadConfig() Data {
 	data := Data{}
-	data = *readEnvConfig(&data)
 	data = *readArgConfig(&data)
+	data = *readEnvConfig(&data)
 	return data
 }
