@@ -37,35 +37,36 @@ func readArgConfig(data *Data) *Data {
 	parser := argparse.NewParser("CommentCI", "Sent a comment to GitHub PR or Issue from your CI")
 	ghro := parser.String("o", "github-owner", &argparse.Options{
 		Required: true,
-		Help:     "Name of the owner of repository",
+		Help:     "Owner of the repository. User/Organisations.",
 	})
 	ghrn := parser.String("r", "github-repository", &argparse.Options{
 		Required: true,
-		Help:     "Name of the github repository",
+		Help:     "Name of the github repository.",
 	})
 	cmt := parser.String("s", "comment", &argparse.Options{
 		Required: false,
-		Help:     "Single comment string to sent to PR",
+		Help:     "Single comment string to sent to GitHub.",
 	})
-	csm := parser.Flag("c", "code", &argparse.Options{
-		Help: "Set this flag if you want to put your file outputs to Markdown code block",
+	csm := parser.Flag("c", "codify", &argparse.Options{
+		Required: false,
+		Help:     "Put comments to the Markdown code block.",
 	})
 	fList := parser.StringList("f", "file", &argparse.Options{
 		Required: false,
-		Help:     "By repeating this flag you can specify multiply files which needs to be send to comment.",
+		Help:     "By repeating this flag you can specify multiple files which content will be sent to comment.",
 	})
 	fCmt := parser.StringList("l", "file-comments", &argparse.Options{
 		Required: false,
-		Help:     "By repeating this flag you can specify comments for provided files in according order",
+		Help:     "By repeating this flag you can specify comments for provided files in according order.",
 	})
 	isn := parser.Int("i", "issue-number", &argparse.Options{
 		Required: true,
-		Help:     "Issue/PR number which should be commented",
+		Help:     "Number(id) of the Issue/PR to sent a comment.",
 	})
 	mcm := parser.Flag("m", "multi-comment", &argparse.Options{
 		Required: false,
 		Default:  false,
-		Help:     "If you want to put each file into a separate comment, set this flag to true.",
+		Help:     "Put each file into a separate comment in GitHub.",
 	})
 	err := parser.Parse(os.Args)
 	if err != nil {
