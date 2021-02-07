@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func fileToString(filePath string) string {
+func FileToString(filePath string) string {
 	fileContent, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Println(err.Error())
@@ -17,7 +17,7 @@ func fileToString(filePath string) string {
 func FilesToStrings(fileList []string) []string {
 	var textList []string
 	for _, p := range fileList {
-		textList = append(textList, fileToString(p))
+		textList = append(textList, FileToString(p))
 	}
 	return textList
 }
