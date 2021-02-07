@@ -1,8 +1,11 @@
 package main
 
-import "github.com/ThelonKarrde/CommentCI/pkg/config"
+import (
+	"fmt"
+	"github.com/ThelonKarrde/CommentCI/pkg/config"
+)
 
 func main() {
-	config.ReadConfig()
+	data := config.ReadConfig()
+	fmt.Println(data)
 }
-

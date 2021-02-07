@@ -7,63 +7,66 @@ import (
 )
 
 type Data struct {
-	GitHubRepoOwner string
-	GitHubRepoName string
-	GitHubCommentUser string
+	GitHubRepoOwner    string
+	GitHubRepoName     string
+	GitHubCommentUser  string
 	GitHubCommentToken string
+	CommentText        string
+	CommentFiles       []string
+	FilesNames         []string
+	CodeStyleMode      bool
 }
 
-func readEnvConfig() *Data {
-	ghro, _ := os.LookupEnv("GITHUB_REPO_OWNER")
-	ghrn, _ := os.LookupEnv("GITHUB_REPO_NAME")
-	ghcu, _ := os.LookupEnv("GITHUB_COMMENT_USER")
-	ghct, _ := os.LookupEnv("GITHUB_COMMENT_TOKEN")
-	return &Data{
-		GitHubRepoOwner:    ghro,
-		GitHubRepoName:     ghrn,
-		GitHubCommentUser:  ghcu,
-		GitHubCommentToken: ghct,
+func readEnvConfig(data *Data) *Data {
+	ghcu, ok := os.LookupEnv("GITHUB_COMMENT_USER")
+	if !ok {
+		log.Fatalf("No GitHub user specified! Check GITHUB_COMMENT_USER env.")
 	}
+	data.GitHubCommentUser = ghcu
+	ghct, ok := os.LookupEnv("GITHUB_COMMENT_TOKEN")
+	if !ok {
+		log.Fatalf("No GitHub token specified! Check GITHUB_COMMENT_TOKEN env.")
+	}
+	data.GitHubCommentToken = ghct
+	return data
 }
 
-func readArgConfig() *Data {
+func readArgConfig(data *Data) *Data {
 	parser := argparse.NewParser("CommentCI", "Sent a comment to GitHub PR or Issue from your CI")
 	ghro := parser.String("o", "github-owner", &argparse.Options{
-		Required: true,
+		Required: false,
 		Help:     "Name of the owner of repository",
 	})
 	ghrn := parser.String("r", "github-repository", &argparse.Options{
-		Required: true,
+		Required: false,
 		Help:     "Name of the github repository",
 	})
-	ghcu := parser.String("u", "github-user", &argparse.Options{
-		Required: true,
-		Help:     "User which will comment PR",
-	})
-	ghct := parser.String("t", "github-token", &argparse.Options{
+	cmt := parser.String("s", "comment", &argparse.Options{
 		Required: false,
-		Help:     "Access token to comment PR",
+		Help:     "Single comment string to sent to PR",
+	})
+	csm := parser.Flag("c", "code", &argparse.Options{
+		Help: "Set this flag if you want to put your file outputs to Markdown code block",
+	})
+	fList := parser.StringList("f", "file", &argparse.Options{
+		Required: false,
+		Help:     "By repeating this flag you can specify multiply files which needs to be send to comment.",
 	})
 	err := parser.Parse(os.Args)
 	if err != nil {
 		log.Println(err.Error())
 	}
-	return &Data{
-		GitHubRepoOwner:    *ghro,
-		GitHubRepoName:     *ghrn,
-		GitHubCommentUser:  *ghcu,
-		GitHubCommentToken: *ghct,
-	}
+	data.GitHubRepoOwner = *ghro
+	data.GitHubRepoName = *ghrn
+	data.CommentText = *cmt
+	data.CodeStyleMode = *csm
+	data.CommentFiles = *fList
+	return data
 }
 
 func ReadConfig() Data {
-	envData := readEnvConfig()
-	argData := readArgConfig()
 	data := Data{}
-	if envData.GitHubRepoName == "" {
-		data = *argData
-	} else {
-		data = *envData
-	}
+	data = *readEnvConfig(&data)
+	data = *readArgConfig(&data)
 	return data
 }
