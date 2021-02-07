@@ -43,7 +43,7 @@ func readArgConfig(data *Data) *Data {
 		Required: true,
 		Help:     "Name of the github repository.",
 	})
-	cmt := parser.String("s", "comment", &argparse.Options{
+	cmt := parser.String("s", "single-comment", &argparse.Options{
 		Required: false,
 		Help:     "Single comment string to sent to GitHub.",
 	})
@@ -55,7 +55,7 @@ func readArgConfig(data *Data) *Data {
 		Required: false,
 		Help:     "By repeating this flag you can specify multiple files which content will be sent to comment.",
 	})
-	fCmt := parser.StringList("l", "file-comments", &argparse.Options{
+	fCmt := parser.StringList("l", "file-comment", &argparse.Options{
 		Required: false,
 		Help:     "By repeating this flag you can specify comments for provided files in according order.",
 	})

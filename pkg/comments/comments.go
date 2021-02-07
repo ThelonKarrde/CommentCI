@@ -4,15 +4,15 @@ func CodifyText(text string) string {
 	return "```\n" + text + "\n```\n"
 }
 
-func AttachComment(text string, comment string) string {
+func AppendComment(text string, comment string) string {
 	return comment + "\n" + text + "\n"
 }
 
 func MakeComment(text string, comment string, codify bool) string {
 	if codify == true {
-		return AttachComment(CodifyText(text), comment)
+		return AppendComment(CodifyText(text), comment)
 	}
-	return AttachComment(text, comment)
+	return AppendComment(text, comment)
 }
 
 func MakeSingleComment(rawText []string, rawComment []string, codify bool) string {

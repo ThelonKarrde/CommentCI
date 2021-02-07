@@ -11,17 +11,27 @@ import (
 func main() {
 	data := config.ReadConfig()
 	if data.CommentText != "" {
-		if data.CommentFiles != nil {
-			log.Println("Warning! Both comment and file-comments args are specified! Priority over single comment flag.")
+		if data.FileList != nil {
+			log.Println("Warning! Both single-comment and file-comment args are specified! Priority over single comment flag.")
 		}
 		ghi.CommentIssue(&data.CommentText, data.GitHubCommentToken, data.GitHubRepoOwner, data.GitHubRepoName, data.IssueNumber)
 	} else {
-		if data.MultiCommentMode == true {
+		if data.MultiCommentMode == false {
 			if data.FileList != nil {
-				comment := cmt.MakeSingleComment(utils.FilesToStrings(data.FileList), data.CommentFiles, data.CodeStyleMode)
+				comment := cmt.MakeSingleComment(utils.ConvertFilesToStrings(data.FileList), data.CommentFiles, data.CodeStyleMode)
 				ghi.CommentIssue(&comment, data.GitHubCommentToken, data.GitHubRepoOwner, data.GitHubRepoName, data.IssueNumber)
 			} else {
 				log.Fatalf("No files specified!")
+			}
+		} else {
+			for i, p := range data.FileList {
+				var comment string
+				if i >= len(data.CommentFiles) {
+					comment = cmt.MakeComment(utils.ReadFileToString(p), "", data.CodeStyleMode)
+				} else {
+					comment = cmt.MakeComment(utils.ReadFileToString(p), data.CommentFiles[i], data.CodeStyleMode)
+				}
+				ghi.CommentIssue(&comment, data.GitHubCommentToken, data.GitHubRepoOwner, data.GitHubRepoName, data.IssueNumber)
 			}
 		}
 	}

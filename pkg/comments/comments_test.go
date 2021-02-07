@@ -14,11 +14,11 @@ func TestCodifyTest(t *testing.T) {
 	}
 }
 
-func TestAttachComment(t *testing.T) {
+func TestAppendComment(t *testing.T) {
 	text := "text"
 	comment := "comment"
 	rString := "comment\ntext\n"
-	cmtString := comments.AttachComment(text, comment)
+	cmtString := comments.AppendComment(text, comment)
 	if cmtString != rString {
 		t.Error("Fail to attach comment! " + cmtString)
 	}
