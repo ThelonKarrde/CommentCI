@@ -1,7 +1,9 @@
 jobs:
   build-package:
     docker:
-      - image: golang:1.15
+      - image: circleci/golang:1.15
+    resource_class: small
+    working_directory: /go/src/github.com/ThelonKarrde/CommentCI
     steps:
       - checkout
       - run:
@@ -11,7 +13,42 @@ jobs:
       - run:
           name: Build package
           command: |
+            dep ensure
             go build -tags netgo -a -o /go/bin/commentci ./cmd/CommentCI.go
+      - run:
+          name: Run tests
+          command: |
+            go fmt ./...
+            go vet ./...
+            go test -v ./...
+
+  deploy-to-github:
+    docker:
+      - image: circleci/golang:1.15
+    working_directory: /go/src/github.com/ThelonKarrde/CommentCI
+    steps:
+      - checkout
+      - run: go get -u github.com/mitchellh/gox
+      - run: go get -u github.com/tcnksm/ghr
+      - run: go get -u github.com/stevenmatthewt/semantics
+      - run:
+          name: cross compile
+          command: |
+            gox -os="linux darwin windows" -arch="amd64" -output="dist/commentci{{.OS}}_{{.Arch}}"
+            cd dist/ && gzip *
+      - add_ssh_keys:
+          fingerprints:
+            - "65:ab:62:56:f6:68:e7:22:96:9b:d6:c6:62:ad:03:8d"
+      - run:
+          name: create release
+          command: |
+            tag=$(semantics --output-tag)
+            if [ "$tag" ]; then
+              ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace $tag dist/
+            else
+              echo "The commit message(s) did not indicate a major/minor/patch version."
+            fi
+
   build-docker:
     docker:
       - image: docker:20.10.3-git
@@ -39,3 +76,11 @@ workflows:
           context:
             - docker-hub
       - build-package
+      - deploy-to-github:
+          context:
+            - github-access
+          requires:
+            - build-package
+          filters:
+            branches:
+              only: master
