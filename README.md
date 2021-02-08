@@ -1,5 +1,8 @@
 # CommentCI
 
+![CircleCI](https://img.shields.io/circleci/build/github/ThelonKarrde/CommentCI/master?style=plastic) ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/rivshiell/commentci) ![GitHub](https://img.shields.io/github/license/thelonkarrde/commentci)
+
+
 A tool to sent comments to Issues or Pull Requests in Github from CI tools.
 
 ---
