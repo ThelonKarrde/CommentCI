@@ -13,7 +13,6 @@ jobs:
       - run:
           name: Build package
           command: |
-            dep ensure
             go build -tags netgo -a -o /go/bin/commentci ./cmd/CommentCI.go
       - run:
           name: Run tests
