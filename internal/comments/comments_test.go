@@ -1,7 +1,7 @@
 package comments_test
 
 import (
-	"github.com/ThelonKarrde/CommentCI/pkg/comments"
+	"github.com/ThelonKarrde/CommentCI/internal/comments"
 	"testing"
 )
 

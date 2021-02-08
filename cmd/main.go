@@ -1,10 +1,10 @@
 package main
 
 import (
-	cmt "github.com/ThelonKarrde/CommentCI/pkg/comments"
-	"github.com/ThelonKarrde/CommentCI/pkg/config"
-	ghi "github.com/ThelonKarrde/CommentCI/pkg/github"
-	"github.com/ThelonKarrde/CommentCI/pkg/utils"
+	cmt "github.com/ThelonKarrde/CommentCI/internal/comments"
+	"github.com/ThelonKarrde/CommentCI/internal/config"
+	ghi "github.com/ThelonKarrde/CommentCI/internal/github"
+	"github.com/ThelonKarrde/CommentCI/internal/utils"
 	"log"
 )
 

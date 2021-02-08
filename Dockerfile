@@ -3,7 +3,7 @@ WORKDIR $GOPATH/src/commentci
 COPY go.mod go.sum ./
 RUN go get -d -v -u all
 COPY ./ ./
-RUN CGO_ENABLED=0 go build -tags netgo -a -o /go/bin/commentci ./cmd/CommentCI.go
+RUN CGO_ENABLED=0 go build -tags netgo -a -o /go/bin/commentci ./cmd/main.go
 
 FROM alpine
 COPY --from=builder /go/bin/commentci /go/bin/commentci

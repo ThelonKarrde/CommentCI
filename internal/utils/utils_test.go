@@ -1,7 +1,7 @@
 package utils_test
 
 import (
-	"github.com/ThelonKarrde/CommentCI/pkg/utils"
+	"github.com/ThelonKarrde/CommentCI/internal/utils"
 	"io/ioutil"
 	"log"
 	"os"

@@ -1,0 +1,90 @@
+workflows:
+  version: 2
+  comment-ci:
+    jobs:
+      - build-docker:
+          context:
+            - docker-hub
+      - build-package
+      - deploy-to-github:
+          context:
+            - github-access
+          requires:
+            - build-package
+          filters:
+            branches:
+              only: master
+
+jobs:
+  build-package:
+    docker:
+      - image: circleci/golang:1.15
+    resource_class: small
+    working_directory: /go/src/github.com/ThelonKarrde/CommentCI
+    steps:
+      - checkout
+      - run:
+          name: Get go packages
+          command: |
+            go get -d -v -u all
+      - run:
+          name: Run tests
+          command: |
+            go fmt ./...
+            go vet ./...
+            go test -v ./...
+      - run:
+          name: Build package
+          command: |
+            GOARCH=amd64 GOOS=linux go build -tags netgo -a -o ./dist/commentci.linux_amd64 ./cmd/main.go
+            GOARCH=amd64 GOOS=windows go build -tags netgo -a -o ./dist/commentci.windows_amd64.exe ./cmd/main.go
+            GOARCH=amd64 GOOS=darwin go build -tags netgo -a -o ./dist/commentci.darwin_amd64 ./cmd/main.go
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - ./*
+
+
+  deploy-to-github:
+    docker:
+      - image: cibuilds/github:0.10
+    resource_class: small
+    steps:
+      - checkout:
+          path: $CIRCLE_WORKING_DIRECTORY/src
+      - attach_workspace:
+          at: /tmp/dist
+      - run:
+          name: Make an archive
+          command: |
+            cd /tmp/dist/ && gzip *
+      - add_ssh_keys:
+          fingerprints:
+            - "65:ab:62:56:f6:68:e7:22:96:9b:d6:c6:62:ad:03:8d"
+      - run:
+          name: create release
+          command: |
+            VERSION=$(cat $CIRCLE_WORKING_DIRECTORY/src/VERSION)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /tmp/dist/
+
+  build-docker:
+    docker:
+      - image: docker:20.10.3-git
+    resource_class: small
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build -t commentci .
+      - deploy:
+          name: Push application Docker image
+          command: |
+            VERSION=$(cat ./VERSION)
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+              docker tag commentci "rivshiell/commentci:${VERSION}"
+              docker push "rivshiell/commentci:${VERSION}"
+            fi
+
