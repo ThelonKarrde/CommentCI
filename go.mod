@@ -1,6 +1,6 @@
 module github.com/ThelonKarrde/CommentCI
 
-go 1.15
+go 1.16
 
 require (
 	github.com/akamensky/argparse v1.2.2
