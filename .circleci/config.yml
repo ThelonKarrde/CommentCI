@@ -18,7 +18,7 @@ workflows:
 jobs:
   build-package:
     docker:
-      - image: circleci/golang:1.15
+      - image: circleci/golang:1.16
     resource_class: small
     working_directory: /go/src/github.com/ThelonKarrde/CommentCI
     steps:
