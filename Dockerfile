@@ -1,4 +1,4 @@
-FROM golang:1.15 AS builder
+FROM golang:1.16 AS builder
 WORKDIR $GOPATH/src/commentci
 COPY go.mod go.sum ./
 RUN go get -d -v -u all
