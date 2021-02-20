@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 )
 
 func ReadFileToString(filePath string) string {
-	fileContent, err := ioutil.ReadFile(filePath)
+	fileContent, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Println(err.Error())
 		return "Unable to read a file: " + filePath
