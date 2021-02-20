@@ -64,8 +64,15 @@ jobs:
       - run:
           name: create release
           command: |
+            get_latest_release() {
+              curl --silent "https://api.github.com/repos/$1/releases/latest" |
+                grep '"tag_name":' |
+                sed -E 's/.*"([^"]+)".*/\1/'
+            }
             VERSION=$(cat $CIRCLE_WORKING_DIRECTORY/src/VERSION)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /tmp/dist/
+            if [ $VERSION != $(get_latest_release ThelonKarrde/CommentCI) ]; then
+              ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /tmp/dist/
+            fi
 
   build-docker:
     docker:
@@ -81,8 +88,13 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
+            get_latest_release() {
+              curl --silent "https://api.github.com/repos/$1/releases/latest" |
+                grep '"tag_name":' |
+                sed -E 's/.*"([^"]+)".*/\1/'
+            }
             VERSION=$(cat ./VERSION)
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [[ "${CIRCLE_BRANCH}" == "master" && $VERSION != $(get_latest_release ThelonKarrde/CommentCI) ]]; then
               docker login -u $DOCKER_USER -p $DOCKER_TOKEN
               docker tag commentci "rivshiell/commentci:${VERSION}"
               docker push "rivshiell/commentci:${VERSION}"
