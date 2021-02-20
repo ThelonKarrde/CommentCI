@@ -88,6 +88,7 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
+            apk add curl
             get_latest_release() {
               curl --silent "https://api.github.com/repos/$1/releases/latest" |
                 grep '"tag_name":' |
