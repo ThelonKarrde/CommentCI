@@ -2,7 +2,6 @@ package utils_test
 
 import (
 	"github.com/ThelonKarrde/CommentCI/internal/utils"
-	"io/ioutil"
 	"log"
 	"os"
 	"testing"
@@ -11,7 +10,7 @@ import (
 func TestReadFileToString(t *testing.T) {
 	testString := "test content"
 	content := []byte(testString)
-	tmpfile, err := ioutil.TempFile("", "test")
+	tmpfile, err := os.CreateTemp("", "test")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,12 +29,12 @@ func TestReadFileToString(t *testing.T) {
 
 func TestConvertFilesToStrings(t *testing.T) {
 	testStrings := [2]string{"test content 1", "test content 2"}
-	tmp1, err := ioutil.TempFile("", "test1")
+	tmp1, err := os.CreateTemp("", "test1")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer os.Remove(tmp1.Name())
-	tmp2, err := ioutil.TempFile("", "test2")
+	tmp2, err := os.CreateTemp("", "test2")
 	if err != nil {
 		log.Fatal(err)
 	}

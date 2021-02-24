@@ -7,41 +7,51 @@ import (
 )
 
 type Data struct {
-	GitHubRepoOwner    string
-	GitHubRepoName     string
-	GitHubCommentUser  string
-	GitHubCommentToken string
-	CommentText        string
-	CommentFiles       []string
-	FileList           []string
-	CodeStyleMode      bool
-	IssueNumber        int
-	MultiCommentMode   bool
+	RepoOwner        string
+	RepoName         string
+	ApiUser          string
+	ApiToken         string
+	Platform         string
+	TargetType       string
+	CommentText      string
+	CommentFiles     []string
+	FileList         []string
+	CodeStyleMode    bool
+	IssueNumber      int
+	MultiCommentMode bool
 }
 
 func readEnvConfig(data *Data) *Data {
-	ghcu, ok := os.LookupEnv("GITHUB_COMMENT_USER")
+	apiUser, ok := os.LookupEnv("API_USER")
 	if !ok {
-		log.Fatalf("No GitHub user specified! Check GITHUB_COMMENT_USER env.")
+		apiUser, ok = os.LookupEnv("GITHUB_COMMENT_USER")
+		if !ok {
+			log.Println("Warning! No API user specified! Check API_USER env.")
+		}
+		log.Println("GITHUB_COMMENT_USER environment variable deprecated, use API_USER instead!")
 	}
-	data.GitHubCommentUser = ghcu
-	ghct, ok := os.LookupEnv("GITHUB_COMMENT_TOKEN")
+	data.ApiUser = apiUser
+	apiToken, ok := os.LookupEnv("API_TOKEN")
 	if !ok {
-		log.Fatalf("No GitHub token specified! Check GITHUB_COMMENT_TOKEN env.")
+		apiToken, ok = os.LookupEnv("GITHUB_COMMENT_TOKEN")
+		if !ok {
+			log.Fatalf("No API token specified! Check API_TOKEN env.")
+		}
+		log.Println("GITHUB_COMMENT_TOKEN environment variable deprecated, use API_TOKEN instead!")
 	}
-	data.GitHubCommentToken = ghct
+	data.ApiToken = apiToken
 	return data
 }
 
 func readArgConfig(data *Data) *Data {
 	parser := argparse.NewParser("CommentCI", "Sent a comment to GitHub PR or Issue from your CI")
-	ghro := parser.String("o", "github-owner", &argparse.Options{
+	ghro := parser.String("o", "owner", &argparse.Options{
 		Required: true,
 		Help:     "Owner of the repository. User/Organisations.",
 	})
-	ghrn := parser.String("r", "github-repository", &argparse.Options{
+	ghrn := parser.String("r", "repository", &argparse.Options{
 		Required: true,
-		Help:     "Name of the github repository.",
+		Help:     "Name of the repository.",
 	})
 	cmt := parser.String("s", "single-comment", &argparse.Options{
 		Required: false,
@@ -68,18 +78,28 @@ func readArgConfig(data *Data) *Data {
 		Default:  false,
 		Help:     "Put each file into a separate comment in GitHub.",
 	})
+	platform := parser.Selector("p", "platform", []string{"github", "gitlab"}, &argparse.Options{
+		Required: true,
+		Help:     "Select platform where to send comments",
+	})
+	glbType := parser.Selector("g", "target-type", []string{"issue", "merge-request"}, &argparse.Options{
+		Required: false,
+		Help:     "Select type of comment target (GitLab only)",
+	})
 	err := parser.Parse(os.Args)
 	if err != nil {
 		log.Println(err.Error())
 	}
-	data.GitHubRepoOwner = *ghro
-	data.GitHubRepoName = *ghrn
+	data.RepoOwner = *ghro
+	data.RepoName = *ghrn
 	data.CommentText = *cmt
 	data.CodeStyleMode = *csm
 	data.FileList = *fList
 	data.CommentFiles = *fCmt
 	data.IssueNumber = *isn
 	data.MultiCommentMode = *mcm
+	data.Platform = *platform
+	data.TargetType = *glbType
 	return data
 }
 
