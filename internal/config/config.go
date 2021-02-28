@@ -7,79 +7,99 @@ import (
 )
 
 type Data struct {
-	GitHubRepoOwner    string
-	GitHubRepoName     string
-	GitHubCommentUser  string
-	GitHubCommentToken string
-	CommentText        string
-	CommentFiles       []string
-	FileList           []string
-	CodeStyleMode      bool
-	IssueNumber        int
-	MultiCommentMode   bool
+	RepoOwner        string
+	RepoName         string
+	ApiUser          string
+	ApiToken         string
+	Platform         string
+	TargetType       string
+	CommentText      string
+	CommentFiles     []string
+	FileList         []string
+	CodeStyleMode    bool
+	IssueNumber      int
+	MultiCommentMode bool
 }
 
 func readEnvConfig(data *Data) *Data {
-	ghcu, ok := os.LookupEnv("GITHUB_COMMENT_USER")
+	apiUser, ok := os.LookupEnv("API_USER")
 	if !ok {
-		log.Fatalf("No GitHub user specified! Check GITHUB_COMMENT_USER env.")
+		apiUser, ok = os.LookupEnv("GITHUB_COMMENT_USER")
+		if !ok {
+			log.Println("Warning! No API user specified! Check API_USER env.")
+		}
+		log.Println("GITHUB_COMMENT_USER environment variable deprecated, use API_USER instead!")
 	}
-	data.GitHubCommentUser = ghcu
-	ghct, ok := os.LookupEnv("GITHUB_COMMENT_TOKEN")
+	data.ApiUser = apiUser
+	apiToken, ok := os.LookupEnv("API_TOKEN")
 	if !ok {
-		log.Fatalf("No GitHub token specified! Check GITHUB_COMMENT_TOKEN env.")
+		apiToken, ok = os.LookupEnv("GITHUB_COMMENT_TOKEN")
+		if !ok {
+			log.Fatalf("No API token specified! Check API_TOKEN env.")
+		}
+		log.Println("GITHUB_COMMENT_TOKEN environment variable deprecated, use API_TOKEN instead!")
 	}
-	data.GitHubCommentToken = ghct
+	data.ApiToken = apiToken
 	return data
 }
 
 func readArgConfig(data *Data) *Data {
 	parser := argparse.NewParser("CommentCI", "Sent a comment to GitHub PR or Issue from your CI")
-	ghro := parser.String("o", "github-owner", &argparse.Options{
+	repoOwner := parser.String("o", "owner", &argparse.Options{
 		Required: true,
 		Help:     "Owner of the repository. User/Organisations.",
 	})
-	ghrn := parser.String("r", "github-repository", &argparse.Options{
+	repoName := parser.String("r", "repository", &argparse.Options{
 		Required: true,
-		Help:     "Name of the github repository.",
+		Help:     "Name of the repository.",
 	})
-	cmt := parser.String("s", "single-comment", &argparse.Options{
+	singleComment := parser.String("s", "single-comment", &argparse.Options{
 		Required: false,
 		Help:     "Single comment string to sent to GitHub.",
 	})
-	csm := parser.Flag("c", "codify", &argparse.Options{
+	codifyFlag := parser.Flag("c", "codify", &argparse.Options{
 		Required: false,
-		Help:     "Put comments to the Markdown code block.",
+		Help:     "Put comment to the Markdown code block.",
 	})
-	fList := parser.StringList("f", "file", &argparse.Options{
+	fileList := parser.StringList("f", "file", &argparse.Options{
 		Required: false,
 		Help:     "By repeating this flag you can specify multiple files which content will be sent to comment.",
 	})
-	fCmt := parser.StringList("l", "file-comment", &argparse.Options{
+	fileComments := parser.StringList("l", "file-comment", &argparse.Options{
 		Required: false,
-		Help:     "By repeating this flag you can specify comments for provided files in according order.",
+		Help:     "By repeating this flag you can specify comment for provided files in according order.",
 	})
-	isn := parser.Int("i", "issue-number", &argparse.Options{
+	issueNumber := parser.Int("i", "issue-number", &argparse.Options{
 		Required: true,
 		Help:     "Number(id) of the Issue/PR to sent a comment.",
 	})
-	mcm := parser.Flag("m", "multi-comment", &argparse.Options{
+	multiCommentFlag := parser.Flag("m", "multi-comment", &argparse.Options{
 		Required: false,
 		Default:  false,
 		Help:     "Put each file into a separate comment in GitHub.",
+	})
+	platformType := parser.Selector("p", "platform", []string{"github", "gitlab"}, &argparse.Options{
+		Required: true,
+		Help:     "Select platform where to send comment",
+	})
+	targetType := parser.Selector("g", "target-type", []string{"issue", "merge-request"}, &argparse.Options{
+		Required: false,
+		Help:     "Select type of comment target (GitLab only)",
 	})
 	err := parser.Parse(os.Args)
 	if err != nil {
 		log.Println(err.Error())
 	}
-	data.GitHubRepoOwner = *ghro
-	data.GitHubRepoName = *ghrn
-	data.CommentText = *cmt
-	data.CodeStyleMode = *csm
-	data.FileList = *fList
-	data.CommentFiles = *fCmt
-	data.IssueNumber = *isn
-	data.MultiCommentMode = *mcm
+	data.RepoOwner = *repoOwner
+	data.RepoName = *repoName
+	data.CommentText = *singleComment
+	data.CodeStyleMode = *codifyFlag
+	data.FileList = *fileList
+	data.CommentFiles = *fileComments
+	data.IssueNumber = *issueNumber
+	data.MultiCommentMode = *multiCommentFlag
+	data.Platform = *platformType
+	data.TargetType = *targetType
 	return data
 }
 

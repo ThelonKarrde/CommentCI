@@ -16,3 +16,6 @@
 
 #Ignore IntelliJ project folder
 .idea
+
+#Ignore binary builds
+main
