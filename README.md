@@ -17,8 +17,8 @@ A tool to sent comments to Issues or Pull Requests in Github from CI tools.
 ### Usage
   
 Required environment variables:
-* `GITHUB_COMMENT_USER` - User from which name will be  sent comments to Github
-* `GITHUB_COMMENT_TOKEN` - Personal Token for comment user. [Github doc](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
+* `API_USER` - User from which name will be sent comments.
+* `API_TOKEN` - Personal Token for comment user.
 
 Available parameters:
 ```
@@ -53,15 +53,15 @@ Usage examples:
 <br></br>
 Single comment:  
 ```
-GITHUB_COMMENT_USER=user GITHUB_COMMENT_TOKEN=xxx commentci -o repo_owner -r repo_name -i 2 -s "Single comment"
+API_USER=user API_TOKEN=xxx commentci -g github -o repo_owner -r repo_name -i 2 -s "Single comment"
 ```  
 <br></br>
 Single file with a comment:  
 ```
-GITHUB_COMMENT_USER=user GITHUB_COMMENT_TOKEN=xxx commentci -o repo_owner -r repo_name -i 2 -c -l "Comment to example file" -f ./example.txt
+API_USER=user API_TOKEN=xxx commentci -g github -o repo_owner -r repo_name -i 2 -c -l "Comment to example file" -f ./example.txt
 ```  
 <br></br>
 Multiple files with comments:  
 ```
-GITHUB_COMMENT_USER=user GITHUB_COMMENT_TOKEN=xxx commentci -o repo_owner -r repo_name -i 2 -c -l "Comment to example file 1" -f ./example_1.txt -l "Comment to example file 2" -f ./example_2.txt
+API_USER=user API_TOKEN=xxx commentci -g github -o repo_owner -r repo_name -i 2 -c -l "Comment to example file 1" -f ./example_1.txt -l "Comment to example file 2" -f ./example_2.txt
 ```  
