@@ -59,7 +59,7 @@ func readArgConfig(data *Data) *Data {
 	})
 	codifyFlag := parser.Flag("c", "codify", &argparse.Options{
 		Required: false,
-		Help:     "Put format to the Markdown code block.",
+		Help:     "Put comment to the Markdown code block.",
 	})
 	fileList := parser.StringList("f", "file", &argparse.Options{
 		Required: false,
@@ -67,7 +67,7 @@ func readArgConfig(data *Data) *Data {
 	})
 	fileComments := parser.StringList("l", "file-comment", &argparse.Options{
 		Required: false,
-		Help:     "By repeating this flag you can specify format for provided files in according order.",
+		Help:     "By repeating this flag you can specify comment for provided files in according order.",
 	})
 	issueNumber := parser.Int("i", "issue-number", &argparse.Options{
 		Required: true,
@@ -80,7 +80,7 @@ func readArgConfig(data *Data) *Data {
 	})
 	platformType := parser.Selector("p", "platform", []string{"github", "gitlab"}, &argparse.Options{
 		Required: true,
-		Help:     "Select platform where to send format",
+		Help:     "Select platform where to send comment",
 	})
 	targetType := parser.Selector("g", "target-type", []string{"issue", "merge-request"}, &argparse.Options{
 		Required: false,

@@ -72,7 +72,7 @@ func TestMakeSingleCommentSTextNoComment(t *testing.T) {
 
 	cmtString := SingleComment(texts, cmts, false)
 	if cmtString != rString {
-		t.Error("Fail to make a single comment without codify and no format! Real: " + cmtString + " Desired: " + rString)
+		t.Error("Fail to make a single comment without codify and no comments! Real: " + cmtString + " Desired: " + rString)
 	}
 }
 
@@ -83,7 +83,7 @@ func TestMakeSingleCommentMTextNoComment(t *testing.T) {
 
 	cmtString := SingleComment(texts, cmts, false)
 	if cmtString != rString {
-		t.Error("Fail to make a single comment without codify and no format! Real: " + cmtString + " Desired: " + rString)
+		t.Error("Fail to make a single comment without codify and no comments! Real: " + cmtString + " Desired: " + rString)
 	}
 }
 
@@ -94,6 +94,6 @@ func TestMakeSingleCommentMTextSComments(t *testing.T) {
 
 	cmtString := SingleComment(texts, cmts, false)
 	if cmtString != rString {
-		t.Error("Fail to make a single comment without codify and 2/1 text format! Real: " + cmtString + " Desired: " + rString)
+		t.Error("Fail to make a single comment without codify and 2/1 text comments! Real: " + cmtString + " Desired: " + rString)
 	}
 }
