@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func createGithubToken(accessToken string) (context.Context, *http.Client) {
+func createOauthClient(accessToken string) (context.Context, *http.Client) {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: accessToken},
@@ -16,11 +16,11 @@ func createGithubToken(accessToken string) (context.Context, *http.Client) {
 	return ctx, oauth2.NewClient(ctx, ts)
 }
 
-func CommentIssue(comment *string, accessToken string, owner string, repo string, issue int) {
-	ctx, token := createGithubToken(accessToken)
-	ghClient := github.NewClient(token)
-	ghCmt := github.IssueComment{Body: comment}
-	_, _, err := ghClient.Issues.CreateComment(ctx, owner, repo, issue, &ghCmt)
+func Comment(commentText *string, accessToken string, owner string, repo string, issue int) {
+	ctx, oauthClient := createOauthClient(accessToken)
+	client := github.NewClient(oauthClient)
+	comment := github.IssueComment{Body: commentText}
+	_, _, err := client.Issues.CreateComment(ctx, owner, repo, issue, &comment)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}

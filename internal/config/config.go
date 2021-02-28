@@ -45,44 +45,44 @@ func readEnvConfig(data *Data) *Data {
 
 func readArgConfig(data *Data) *Data {
 	parser := argparse.NewParser("CommentCI", "Sent a comment to GitHub PR or Issue from your CI")
-	ghro := parser.String("o", "owner", &argparse.Options{
+	repoOwner := parser.String("o", "owner", &argparse.Options{
 		Required: true,
 		Help:     "Owner of the repository. User/Organisations.",
 	})
-	ghrn := parser.String("r", "repository", &argparse.Options{
+	repoName := parser.String("r", "repository", &argparse.Options{
 		Required: true,
 		Help:     "Name of the repository.",
 	})
-	cmt := parser.String("s", "single-comment", &argparse.Options{
+	singleComment := parser.String("s", "single-comment", &argparse.Options{
 		Required: false,
 		Help:     "Single comment string to sent to GitHub.",
 	})
-	csm := parser.Flag("c", "codify", &argparse.Options{
+	codifyFlag := parser.Flag("c", "codify", &argparse.Options{
 		Required: false,
-		Help:     "Put comments to the Markdown code block.",
+		Help:     "Put format to the Markdown code block.",
 	})
-	fList := parser.StringList("f", "file", &argparse.Options{
+	fileList := parser.StringList("f", "file", &argparse.Options{
 		Required: false,
 		Help:     "By repeating this flag you can specify multiple files which content will be sent to comment.",
 	})
-	fCmt := parser.StringList("l", "file-comment", &argparse.Options{
+	fileComments := parser.StringList("l", "file-comment", &argparse.Options{
 		Required: false,
-		Help:     "By repeating this flag you can specify comments for provided files in according order.",
+		Help:     "By repeating this flag you can specify format for provided files in according order.",
 	})
-	isn := parser.Int("i", "issue-number", &argparse.Options{
+	issueNumber := parser.Int("i", "issue-number", &argparse.Options{
 		Required: true,
 		Help:     "Number(id) of the Issue/PR to sent a comment.",
 	})
-	mcm := parser.Flag("m", "multi-comment", &argparse.Options{
+	multiCommentFlag := parser.Flag("m", "multi-comment", &argparse.Options{
 		Required: false,
 		Default:  false,
 		Help:     "Put each file into a separate comment in GitHub.",
 	})
-	platform := parser.Selector("p", "platform", []string{"github", "gitlab"}, &argparse.Options{
+	platformType := parser.Selector("p", "platform", []string{"github", "gitlab"}, &argparse.Options{
 		Required: true,
-		Help:     "Select platform where to send comments",
+		Help:     "Select platform where to send format",
 	})
-	glbType := parser.Selector("g", "target-type", []string{"issue", "merge-request"}, &argparse.Options{
+	targetType := parser.Selector("g", "target-type", []string{"issue", "merge-request"}, &argparse.Options{
 		Required: false,
 		Help:     "Select type of comment target (GitLab only)",
 	})
@@ -90,16 +90,16 @@ func readArgConfig(data *Data) *Data {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	data.RepoOwner = *ghro
-	data.RepoName = *ghrn
-	data.CommentText = *cmt
-	data.CodeStyleMode = *csm
-	data.FileList = *fList
-	data.CommentFiles = *fCmt
-	data.IssueNumber = *isn
-	data.MultiCommentMode = *mcm
-	data.Platform = *platform
-	data.TargetType = *glbType
+	data.RepoOwner = *repoOwner
+	data.RepoName = *repoName
+	data.CommentText = *singleComment
+	data.CodeStyleMode = *codifyFlag
+	data.FileList = *fileList
+	data.CommentFiles = *fileComments
+	data.IssueNumber = *issueNumber
+	data.MultiCommentMode = *multiCommentFlag
+	data.Platform = *platformType
+	data.TargetType = *targetType
 	return data
 }
 

@@ -5,34 +5,33 @@ import (
 	"log"
 )
 
-func createGitlabClient(apiToken string) *gogitlab.Client {
-	git, err := gogitlab.NewClient(apiToken)
+func createClient(apiToken string) *gogitlab.Client {
+	client, err := gogitlab.NewClient(apiToken)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
-	return git
+	return client
 }
 
 func makePid(owner string, repo string) string {
 	return owner + "/" + repo
 }
 
-func CommentIssue(comment *string, apiToken string, owner string, repo string, issue int) {
-	git := createGitlabClient(apiToken)
-	cmtOpts := gogitlab.CreateIssueNoteOptions{Body: comment}
+func Comment(cmType string, comment *string, apiToken string, owner string, repo string, id int) {
+	git := createClient(apiToken)
 	pid := makePid(owner, repo)
-	_, _, err := git.Notes.CreateIssueNote(pid, issue, &cmtOpts)
-	if err != nil {
-		log.Fatalf("Failed to create Issue comment: %v", err)
+	var err error
+	switch cmType {
+	case "issue":
+		cmtOpts := gogitlab.CreateIssueNoteOptions{Body: comment}
+		_, _, err = git.Notes.CreateIssueNote(pid, id, &cmtOpts)
+	case "merge-request":
+		cmtOpts := gogitlab.CreateMergeRequestNoteOptions{Body: comment}
+		_, _, err = git.Notes.CreateMergeRequestNote(pid, id, &cmtOpts)
+	default:
+		log.Fatalf("No target type sepcified for GitLab mode!")
 	}
-}
-
-func CommentMergeRequest(comment *string, apiToken string, owner string, repo string, mr int) {
-	git := createGitlabClient(apiToken)
-	cmtOpts := gogitlab.CreateMergeRequestNoteOptions{Body: comment}
-	pid := makePid(owner, repo)
-	_, _, err := git.Notes.CreateMergeRequestNote(pid, mr, &cmtOpts)
 	if err != nil {
-		log.Fatalf("Failed to create Merge Request comment: %v", err)
+		log.Fatalf("Failt to create %s comment: %v", cmType, err)
 	}
 }

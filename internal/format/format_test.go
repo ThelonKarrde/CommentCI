@@ -1,14 +1,13 @@
-package comments_test
+package format
 
 import (
-	"github.com/ThelonKarrde/CommentCI/internal/comments"
 	"testing"
 )
 
 func TestCodifyTest(t *testing.T) {
 	testString := "comment"
 	rString := "```\ncomment\n```\n"
-	codifiedString := comments.CodifyText(testString)
+	codifiedString := CodifyText(testString)
 	if codifiedString != rString {
 		t.Error("Fail to codify string! " + codifiedString)
 	}
@@ -18,7 +17,7 @@ func TestAppendComment(t *testing.T) {
 	text := "text"
 	comment := "comment"
 	rString := "comment\ntext\n"
-	cmtString := comments.AppendComment(text, comment)
+	cmtString := appendComment(text, comment)
 	if cmtString != rString {
 		t.Error("Fail to attach comment! " + cmtString)
 	}
@@ -28,7 +27,7 @@ func TestMakeCommentNoCodify(t *testing.T) {
 	text := "text"
 	comment := "comment"
 	rString := "comment\ntext\n"
-	cmtString := comments.MakeComment(text, comment, false)
+	cmtString := Comment(text, comment, false)
 	if cmtString != rString {
 		t.Error("Fail to make a comment without codify! " + cmtString)
 	}
@@ -38,7 +37,7 @@ func TestMakeCommentWithCodify(t *testing.T) {
 	text := "text"
 	comment := "comment"
 	rString := "comment\n```\ntext\n```\n\n"
-	cmtString := comments.MakeComment(text, comment, true)
+	cmtString := Comment(text, comment, true)
 	if cmtString != rString {
 		t.Error("Fail to make a comment with codify! Real: " + cmtString + " Desired: " + rString)
 	}
@@ -49,7 +48,7 @@ func TestMakeSingleCommentMText(t *testing.T) {
 	cmts := []string{"comment1", "comment2"}
 	rString := "comment1\ntext1\ncomment2\ntext2\n"
 
-	cmtString := comments.MakeSingleComment(texts, cmts, false)
+	cmtString := SingleComment(texts, cmts, false)
 	if cmtString != rString {
 		t.Error("Fail to make a single comment with codify! Real: " + cmtString + " Desired: " + rString)
 	}
@@ -60,7 +59,7 @@ func TestMakeSingleCommentSText(t *testing.T) {
 	cmts := []string{"comment1"}
 	rString := "comment1\ntext1\n"
 
-	cmtString := comments.MakeSingleComment(texts, cmts, false)
+	cmtString := SingleComment(texts, cmts, false)
 	if cmtString != rString {
 		t.Error("Fail to make a single comment with codify! Real: " + cmtString + " Desired: " + rString)
 	}
@@ -71,9 +70,9 @@ func TestMakeSingleCommentSTextNoComment(t *testing.T) {
 	var cmts []string
 	rString := "\ntext1\n"
 
-	cmtString := comments.MakeSingleComment(texts, cmts, false)
+	cmtString := SingleComment(texts, cmts, false)
 	if cmtString != rString {
-		t.Error("Fail to make a single comment without codify and no comments! Real: " + cmtString + " Desired: " + rString)
+		t.Error("Fail to make a single comment without codify and no format! Real: " + cmtString + " Desired: " + rString)
 	}
 }
 
@@ -82,9 +81,9 @@ func TestMakeSingleCommentMTextNoComment(t *testing.T) {
 	var cmts []string
 	rString := "\ntext1\n\ntext2\n"
 
-	cmtString := comments.MakeSingleComment(texts, cmts, false)
+	cmtString := SingleComment(texts, cmts, false)
 	if cmtString != rString {
-		t.Error("Fail to make a single comment without codify and no comments! Real: " + cmtString + " Desired: " + rString)
+		t.Error("Fail to make a single comment without codify and no format! Real: " + cmtString + " Desired: " + rString)
 	}
 }
 
@@ -93,8 +92,8 @@ func TestMakeSingleCommentMTextSComments(t *testing.T) {
 	cmts := []string{"comment1"}
 	rString := "comment1\ntext1\n\ntext2\n"
 
-	cmtString := comments.MakeSingleComment(texts, cmts, false)
+	cmtString := SingleComment(texts, cmts, false)
 	if cmtString != rString {
-		t.Error("Fail to make a single comment without codify and 2/1 text comments! Real: " + cmtString + " Desired: " + rString)
+		t.Error("Fail to make a single comment without codify and 2/1 text format! Real: " + cmtString + " Desired: " + rString)
 	}
 }

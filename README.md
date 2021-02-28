@@ -6,6 +6,13 @@
 A tool to sent comments to Issues or Pull Requests in Github from CI tools.
 
 ---
+### Platforms
+
+| Supported platforms | Fully supported | In development |
+|---------------------|-----------------|----------------|
+| Github              | ✔               |                |
+| GitLab              | ✔               |                |
+| BitBucket           |                 | ✔              |
 
 ### Usage
   
@@ -15,28 +22,31 @@ Required environment variables:
 
 Available parameters:
 ```
-usage: CommentCI [-h|--help] -o|--github-owner "<value>" -r|--github-repository
-                 "<value>" [-s|--single-comment "<value>"] [-c|--codify]
-                 [-f|--file "<value>" [-f|--file "<value>" ...]]
-                 [-l|--file-comment "<value>" [-l|--file-comment "<value>"
-                 ...]] -i|--issue-number <integer> [-m|--multi-comment]
+usage: CommentCI [-h|--help] -o|--owner "<value>" -r|--repository "<value>"
+                 [-s|--single-comment "<value>"] [-c|--codify] [-f|--file
+                 "<value>" [-f|--file "<value>" ...]] [-l|--file-comment
+                 "<value>" [-l|--file-comment "<value>" ...]] -i|--issue-number
+                 <integer> [-m|--multi-comment] -p|--platform (github|gitlab)
+                 [-g|--target-type (issue|merge-request)]
 
                  Sent a comment to GitHub PR or Issue from your CI
 
 Arguments:
 
-  -h  --help               Print help information
-  -o  --github-owner       Owner of the repository. User/Organisations.
-  -r  --github-repository  Name of the github repository.
-  -s  --single-comment     Single comment string to sent to GitHub.
-  -c  --codify             Put comments to the Markdown code block.
-  -f  --file               By repeating this flag you can specify multiple
-                           files which content will be sent to comment.
-  -l  --file-comment       By repeating this flag you can specify comments for
-                           provided files in according order.
-  -i  --issue-number       Number(id) of the Issue/PR to sent a comment.
-  -m  --multi-comment      Put each file into a separate comment in GitHub..
-                           Default: false
+  -h  --help            Print help information
+  -o  --owner           Owner of the repository. User/Organisations.
+  -r  --repository      Name of the repository.
+  -s  --single-comment  Single comment string to sent to GitHub.
+  -c  --codify          Put format to the Markdown code block.
+  -f  --file            By repeating this flag you can specify multiple files
+                        which content will be sent to comment.
+  -l  --file-comment    By repeating this flag you can specify format for
+                        provided files in according order.
+  -i  --issue-number    Number(id) of the Issue/PR to sent a comment.
+  -m  --multi-comment   Put each file into a separate comment in GitHub..
+                        Default: false
+  -p  --platform        Select platform where to send format
+  -g  --target-type     Select type of comment target (GitLab only)
 ```
 
 Usage examples:  
