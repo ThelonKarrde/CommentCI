@@ -1,6 +1,7 @@
-package main
+package cmd
 
 import (
+	"fmt"
 	"github.com/ThelonKarrde/CommentCI/internal/config"
 	"github.com/ThelonKarrde/CommentCI/internal/format"
 	ghi "github.com/ThelonKarrde/CommentCI/internal/github"
@@ -9,7 +10,7 @@ import (
 	"log"
 )
 
-func main() {
+func Cmd() {
 	cfg := config.ReadConfig()
 	var comments []string
 	if cfg.CommentText != "" {
@@ -25,6 +26,7 @@ func main() {
 			}
 		} else {
 			if len(cfg.FileList) > 0 {
+				fmt.Println(cfg.FileList)
 				comments = append(comments, format.SingleComment(utils.ConvertFilesToStrings(cfg.FileList), cfg.CommentFiles, cfg.CodeStyleMode))
 			} else {
 				log.Fatalf("No files specified!")

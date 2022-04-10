@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
@@ -18,6 +19,7 @@ func ConvertFilesToStrings(fileList []string) []string {
 	var stringList []string
 	for _, p := range fileList {
 		stringList = append(stringList, ReadFileToString(p))
+		fmt.Println(stringList)
 	}
 	return stringList
 }
