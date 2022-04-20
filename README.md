@@ -1,6 +1,7 @@
 # CommentCI
 
 ![CircleCI](https://img.shields.io/circleci/build/github/ThelonKarrde/CommentCI/master?style=plastic) ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/rivshiell/commentci) ![GitHub](https://img.shields.io/github/license/thelonkarrde/commentci)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FThelonKarrde%2FCommentCI.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FThelonKarrde%2FCommentCI?ref=badge_shield)
 
 
 A tool to sent comments to Issues or Pull Requests in Github from CI tools.
@@ -65,3 +66,6 @@ Multiple files with comments:
 ```
 API_USER=user API_TOKEN=xxx commentci -g github -o repo_owner -r repo_name -i 2 -c -l "Comment to example file 1" -f ./example_1.txt -l "Comment to example file 2" -f ./example_2.txt
 ```  
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FThelonKarrde%2FCommentCI.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FThelonKarrde%2FCommentCI?ref=badge_large)
